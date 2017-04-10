@@ -6,7 +6,13 @@ import datetime
 from optparse import OptionParser 
 import subprocess
 
-hn_comment_id = "14081599"
+parser = OptionParser()
+parser.add_option("-i", "--id", dest="hn_id", help="the id of the HN comment to track")
+
+(options, args)=parser.parse_args()
+
+if options.hn_id != None:
+	hn_comment_id = options.hn_id
 
 base_url = "https://hacker-news.firebaseio.com/v0/item/"
 
