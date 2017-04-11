@@ -23,7 +23,18 @@ opener = urllib2.build_opener()
 f = opener.open(req)
 json_obj = json.load(f)
 
-print json_obj["by"];
-print json_obj["kids"];
-for id in json_obj["kids"]:
-    print "kid = " + repr(id);
+#check only process if the ID belongs to a comment
+
+if json_obj["type"] == "comment":
+    print json_obj["by"];
+    
+    # don't count if it does not have any kids.
+    if json_obj.has_key("kids"):
+        print json_obj["kids"];
+        for id in json_obj["kids"]:
+            print "kid = " + repr(id);
+    else:
+        print "No kids"
+else:
+    print "Not a comment";
+    
