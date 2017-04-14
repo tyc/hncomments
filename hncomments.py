@@ -53,8 +53,6 @@ def show_help():
 # the root from the tree is passed in. it is assumed tha the root is already 
 # the datatype of Node.
 def build_tree(root, root_node) :
-
-
     branches = get_hn_IDs(root.id);
 
     if len(branches) != 0 :
@@ -69,15 +67,13 @@ def build_tree(root, root_node) :
             print "branch[" + str(x) + "] = " + str(branch.id);
             build_tree(branch, branch_node);
     else:
-        print "no more branches found"
         leaves.append(root_node);    
 
     root.status = "old";
     pass
 
 
-# get the main id
-
+# Let's go
 def main():
     parser = OptionParser()
     parser.add_option("-i", "--id", dest="hn_id", help="the id of the HN comment to track")
