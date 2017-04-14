@@ -51,7 +51,7 @@ def show_help():
 #
 # the root from the tree is passed in. it is assumed tha the root is already 
 # the datatype of Node.
-def build_tree(root) :
+def build_tree(root, root_node) :
 
     print "root = " + str(root.id);
 
@@ -59,35 +59,43 @@ def build_tree(root) :
 
     if len(branches) != 0 :
          for x in range(0, len(branches)) :
-            temp_branch = id_node();
-            temp_branch.id = branches[x];
-            temp_branch.status = "new";
-#             Node(temp_branch, parent=root)
+            branch = id_node();
+            branch.id = branches[x];
+            branch.status = "new";
+            branch_node = Node(branch, parent=root_node);
     
-            print "branch[" + str(x) + "] = " + str(temp_branch.id);
-            build_tree(temp_branch);    
+            print "branch[" + str(x) + "] = " + str(branch.id);
+            build_tree(branch, branch_node);    
 
     root.status = "old";
     pass
 
-parser = OptionParser()
-parser.add_option("-i", "--id", dest="hn_id", help="the id of the HN comment to track")
 
-(options, args)=parser.parse_args()
+# get the main id
 
-array_x = [];
+def main():
+    parser = OptionParser()
+    parser.add_option("-i", "--id", dest="hn_id", help="the id of the HN comment to track")
 
-if options.hn_id != None:
+    (options, args)=parser.parse_args()
 
-    # setup the root of the tree
+    if options.hn_id != None:
 
-    tree_root_id = id_node(); 
-    tree_root_id.id = options.hn_id;
-    tree_root_id.status = "new"; 
-    build_tree(tree_root_id);
+        # setup the root of the tree
 
-else :
-    show_help();
+        root = id_node(); 
+        root.id = options.hn_id;
+        root.status = "new";
+
+        root_node = Node(root);
+
+        build_tree(root, root_node);
+
+    else :
+        show_help();
+
+if __name__ == "__main__":
+    main()
 
     
     
