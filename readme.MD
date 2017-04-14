@@ -7,3 +7,6 @@ The HN item is here.
 https://news.ycombinator.com/item?id=14045391
 
 This python code is my prototype to get an algorithm.
+
+The long term goal is to push this algorithm into something like a webextension so that it can be use in a web brower. Afterall, the HN is a website.
+
