@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import urllib2
+import pickle as file_dumper
 import simplejson as json
 from optparse import OptionParser
 from anytree import Node, RenderTree, PreOrderIter
@@ -7,6 +8,7 @@ import subprocess
 
 # contains all the leaves in found.
 leaves = [];
+comment_count = 0;
 
 class id_node :
     id = ''         # the ID of HN comment 
@@ -45,7 +47,18 @@ def show_help():
     print "-i --> the ID for the HN comment";
 
     pass;
-    
+
+def dump_tree(root_node):
+
+    print "root = " + str(root_node.name.id);
+    children = root_node.children;
+
+    if len(children) != 0:
+        for child in children :
+            print "child = " + str(child.name.id);
+            dump_tree(child);
+    pass
+
 # 1. get a list of branches.
 # 2. iterate each branch by calling itself recursively. Recursion stops when
 #    there are no more branches.
@@ -63,7 +76,7 @@ def build_tree(root, root_node) :
             branch.id = branches[x];
             branch.status = "new";
             branch_node = Node(branch, parent=root_node);
-    
+            
             print "branch[" + str(x) + "] = " + str(branch.id);
             build_tree(branch, branch_node);
     else:
@@ -75,12 +88,15 @@ def build_tree(root, root_node) :
 
 # Let's go
 def main():
+    global leaves;
+    
     parser = OptionParser()
     parser.add_option("-i", "--id", dest="hn_id", help="the id of the HN comment to track")
+    parser.add_option("-c", "--check", dest="check", action="store_false", help="check for new comments")
 
     (options, args)=parser.parse_args()
 
-    if options.hn_id != None:
+    if options.check != None:
 
         # setup the root of the tree
         root = id_node(); 
@@ -88,16 +104,46 @@ def main():
         root.status = "new";
 
         root_node = Node(root);
-        build_tree(root, root_node);
+
+        #read the data back in from disk.
+        fl = open(str(root.id) + ".leaves", "rb");
+        leaves = file_dumper.load(fl);
+        fl.close();
+
+        fl = open(str(root.id) + ".tree", "rb");
+        root_node = file_dumper.load(fl);
+        fl.close();
 
         for leaf_element in range(0, len(leaves)) :
             print "leaf[" + str(leaf_element) + "] = " + str(leaves[leaf_element].name.id)
 
-    else :
-        show_help();
+        dump_tree(root_node);
+
+    else:
+        if options.hn_id != None:
+            # setup the root of the tree
+            root = id_node(); 
+            root.id = options.hn_id;
+            root.status = "new";
+
+            root_node = Node(root);
+            build_tree(root, root_node);
+
+            for leaf_element in range(0, len(leaves)) :
+                print "leaf[" + str(leaf_element) + "] = " + str(leaves[leaf_element].name.id)
+
+            fl = open(str(root.id) + ".leaves", "wb");
+            file_dumper.dump(leaves, fl);
+            fl.close();
+
+            fl = open(str(root.id) + ".tree", "wb");
+            file_dumper.dump(root_node, fl);
+            fl.close();
+        else :
+            show_help();
 
 if __name__ == "__main__":
-   main()
+    main()
 
     
     
