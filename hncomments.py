@@ -13,7 +13,7 @@ comment_count = 0;
 class id_node :
     id = ''         # the ID of HN comment 
     status = ''     # whether the comment is old or new.
-    walked = ''     # the status of the id during tree creation
+    read = ''       # flag whether the comment has been read
 
 # for a given HN comment ID, it returns a list of kids ID.
 # It will return an empty array of no kids were found.
@@ -50,14 +50,21 @@ def show_help():
 
 def dump_tree(root_node):
 
-    print "root = " + str(root_node.name.id);
-    children = root_node.children;
+    for pre, _, node in RenderTree(root_node):
+        print ("%s%s" % (pre, (str(node.name.id) + "-" + str(node.name.status))))
 
-    if len(children) != 0:
-        for child in children :
-            print "child = " + str(child.name.id);
-            dump_tree(child);
     pass
+
+def mark_all_node(root_node, status):
+    
+    root_node.name.status = status;
+    branches=root_node.children;
+    if len(branches)!=0:
+        for branch in branches:
+            mark_all_node(branch,status)
+
+    pass
+
 
 # 1. get a list of branches.
 # 2. iterate each branch by calling itself recursively. Recursion stops when
@@ -70,19 +77,19 @@ def build_tree(root, root_node) :
 
     if len(branches) != 0 :
         print "root = " + str(root.id);
+        root.status = "old";
 
         for x in range(0, len(branches)) :
             branch = id_node();
             branch.id = branches[x];
-            branch.status = "new";
             branch_node = Node(branch, parent=root_node);
             
             print "branch[" + str(x) + "] = " + str(branch.id);
             build_tree(branch, branch_node);
     else:
+        root.status = "new";
         leaves.append(root_node);    
 
-    root.status = "old";
     pass
 
 
@@ -108,16 +115,50 @@ def main():
         #read the data back in from disk.
         fl = open(str(root.id) + ".leaves", "rb");
         leaves = file_dumper.load(fl);
+        old_leaves = leaves;
         fl.close();
 
         fl = open(str(root.id) + ".tree", "rb");
         root_node = file_dumper.load(fl);
         fl.close();
 
+        # before
+        print "Previous list of leaves"
         for leaf_element in range(0, len(leaves)) :
-            print "leaf[" + str(leaf_element) + "] = " + str(leaves[leaf_element].name.id)
+            print "leaf[" + str(leaf_element) + "] = " + str(leaves[leaf_element].name.id)        
 
         dump_tree(root_node);
+
+        for leaf_element in range(0, len(leaves)) :
+
+            # assumed that the leaf is not a leaf anymore, so it is removed from
+            # the list. If it is still a leaf, it is gets added back on the list
+            # in build_tree(). Store the data into temp_node before popping off 
+            # the list.
+
+            temp_node = leaves[0];
+
+            leaves.pop(0);
+            build_tree(temp_node.name,temp_node);
+
+
+            # print "leaf[" + str(leaf_element) + "] = " + str(leaves[leaf_element].name.id)        
+        
+        # after
+        print "The new list of leaves"
+        for leaf_element in range(0, len(leaves)) :
+            print "leaf[" + str(leaf_element) + "] = " + str(leaves[leaf_element].name.id)        
+
+        dump_tree(root_node);
+
+        # saves the data away for next time.
+        fl = open(str(root.id) + ".leaves", "wb");
+        file_dumper.dump(leaves, fl);
+        fl.close();
+
+        fl = open(str(root.id) + ".tree", "wb");
+        file_dumper.dump(root_node, fl);
+        fl.close();
 
     else:
         if options.hn_id != None:
@@ -129,8 +170,7 @@ def main():
             root_node = Node(root);
             build_tree(root, root_node);
 
-            for leaf_element in range(0, len(leaves)) :
-                print "leaf[" + str(leaf_element) + "] = " + str(leaves[leaf_element].name.id)
+            dump_tree(root_node);
 
             fl = open(str(root.id) + ".leaves", "wb");
             file_dumper.dump(leaves, fl);
@@ -145,6 +185,22 @@ def main():
 if __name__ == "__main__":
     main()
 
+    # setup the root of the tree
+    # root = id_node(); 
+    # root.id ="14116179"    
+    # root.status = "new";
+
+    # root_node = Node(root);
+
+    # fl = open(str(root.id) + ".tree", "rb");
+    # root_node = file_dumper.load(fl);
+    # fl.close();
+
+    # dump_tree(root_node);
+
+    # mark_all_node(root_node,"old_dog_new_tricks");
+
+    # dump_tree(root_node);
     
     
     
