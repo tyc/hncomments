@@ -1,11 +1,12 @@
 #!/usr/bin/python
 import urllib2
 import simplejson as json
-import smtplib
-import datetime 
 from optparse import OptionParser
 from anytree import Node, RenderTree, PreOrderIter
 import subprocess
+
+# contains all the leaves in found.
+leaves = [];
 
 class id_node :
     id = ''         # the ID of HN comment 
@@ -53,19 +54,23 @@ def show_help():
 # the datatype of Node.
 def build_tree(root, root_node) :
 
-    print "root = " + str(root.id);
 
     branches = get_hn_IDs(root.id);
 
     if len(branches) != 0 :
-         for x in range(0, len(branches)) :
+        print "root = " + str(root.id);
+
+        for x in range(0, len(branches)) :
             branch = id_node();
             branch.id = branches[x];
             branch.status = "new";
             branch_node = Node(branch, parent=root_node);
     
             print "branch[" + str(x) + "] = " + str(branch.id);
-            build_tree(branch, branch_node);    
+            build_tree(branch, branch_node);
+    else:
+        print "no more branches found"
+        leaves.append(root_node);    
 
     root.status = "old";
     pass
@@ -82,20 +87,21 @@ def main():
     if options.hn_id != None:
 
         # setup the root of the tree
-
         root = id_node(); 
         root.id = options.hn_id;
         root.status = "new";
 
         root_node = Node(root);
-
         build_tree(root, root_node);
+
+        for leaf_element in range(0, len(leaves)) :
+            print "leaf[" + str(leaf_element) + "] = " + str(leaves[leaf_element].name.id)
 
     else :
         show_help();
 
 if __name__ == "__main__":
-    main()
+   main()
 
     
     
