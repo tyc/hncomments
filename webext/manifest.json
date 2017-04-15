@@ -1,0 +1,28 @@
+{
+
+  "manifest_version": 2,
+  "name": "HNCommentsTracker",
+  "version": "1.0",
+
+  "description": "Track your comment thread for additional comments",
+  "homepage_url": "https://github.com/tyc/hncomments",
+  "icons": {
+    "48": "icons/Snowflake.png"
+  },
+
+  "permissions": [
+    "activeTab"
+  ],
+
+  "browser_action": {
+    "default_icon": "icons/Snowflake.png",
+    "default_title": "HNCommentsTracker",
+    "default_popup": "popup/choose_beast.html"
+  },
+
+  "web_accessible_resources": [
+    "beasts/frog.jpg",
+    "beasts/turtle.jpg",
+    "beasts/snake.jpg"
+  ]
+}
