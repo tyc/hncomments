@@ -2,6 +2,7 @@
 import urllib2
 import pickle as file_dumper
 import simplejson as json
+from os import path
 from optparse import OptionParser
 from anytree import Node, RenderTree, PreOrderIter, AsciiStyle
 import subprocess
@@ -88,12 +89,16 @@ def build_tree(root, root_node) :
     # iterates over the list of old IDs. What is left in the branches array
     # should be the new IDs.
 
-    if root_node.is_leaf == False :
-        for root_leaf in range(0, len(root_node.children)):
-            if root_node.children[root_leaf].name.id in branches == True :
-                drop_index = branches.index(root_node.children[root_leaf].name.id);
-                branches.pop(drop_index);
+    # bug: if there are no new nodes at this check, subsequent new nodes at
+    # lower level are ignored.
 
+    for root_leaf in range(0, len(root_node.children)):
+        result = root_node.children[root_leaf].name.id in branches; 
+        if result == True :
+            drop_index = branches.index(root_node.children[root_leaf].name.id);
+#            print "old = " + str(root_node.children[root_leaf].name.id) + " " + str(result) + " " + str(drop_index);
+            branches.pop(drop_index);
+    
     if len(branches) != 0 :
         print "root = " + str(root.id);
 
@@ -112,62 +117,15 @@ def build_tree(root, root_node) :
 
 
 # Let's go
-def new_main():
-    global leaves;
-    
-    parser = OptionParser()
-    parser.add_option("-i", "--id", dest="hn_id", help="the id of the HN comment to track")
-    parser.add_option("-c", "--check", dest="check", action="store_false", help="check for new comments")
-
-    (options, args)=parser.parse_args()
-
-    # load in the save tree and mark all the nodes as old
-    if options.check != None:
-
-        # setup the root of the tree
-        root = id_node(); 
-        root.id = options.hn_id;
-        root.status = "new";
-
-        root_node = Node(root);
-
-        #read the data back in from disk.
-        fl = open(str(root.id) + ".leaves", "rb");
-        leaves = file_dumper.load(fl);
-        old_leaves = leaves;
-        fl.close();
-
-        fl = open(str(root.id) + ".tree", "rb");
-        root_node = file_dumper.load(fl);
-        fl.close();
-
-        # before
-        print "Previous list of leaves"
-        for leaf_element in range(0, len(leaves)) :
-            print "leaf[" + str(leaf_element) + "] = " + str(leaves[leaf_element].name.id)        
-
-        mark_all_node(root_node, "old");
-        dump_tree(root_node);
-
-    build_tree(root, root_node);
-
-    dump_tree(root_node);
-
-
-
-
-
-# Let's go
 def main():
     global leaves;
     
     parser = OptionParser()
     parser.add_option("-i", "--id", dest="hn_id", help="the id of the HN comment to track")
-    parser.add_option("-c", "--check", dest="check", action="store_false", help="check for new comments")
 
     (options, args)=parser.parse_args()
 
-    if options.check != None:
+    if options.hn_id != None:
 
         # setup the root of the tree
         root = id_node(); 
@@ -175,43 +133,22 @@ def main():
         root.status = "new";
 
         root_node = Node(root);
+        # there is a save file already, use it.
+        if path.exists(str(root.id) + ".leaves") == True :
+            #read the data back in from disk.
+            fl = open(str(root.id) + ".leaves", "rb");
+            leaves = file_dumper.load(fl);
+            old_leaves = leaves;
+            fl.close();
 
-        #read the data back in from disk.
-        fl = open(str(root.id) + ".leaves", "rb");
-        leaves = file_dumper.load(fl);
-        old_leaves = leaves;
-        fl.close();
+            fl = open(str(root.id) + ".tree", "rb");
+            root_node = file_dumper.load(fl);
+            fl.close();
 
-        fl = open(str(root.id) + ".tree", "rb");
-        root_node = file_dumper.load(fl);
-        fl.close();
+            mark_all_node(root_node, "old");
+            dump_tree(root_node);
 
-        # before
-        print "Previous list of leaves"
-        for leaf_element in range(0, len(leaves)) :
-            print "leaf[" + str(leaf_element) + "] = " + str(leaves[leaf_element].name.id)        
-
-        dump_tree(root_node);
-
-        for leaf_element in range(0, len(leaves)) :
-
-            # assumed that the leaf is not a leaf anymore, so it is removed from
-            # the list. If it is still a leaf, it is gets added back on the list
-            # in build_tree(). Store the data into temp_node before popping off 
-            # the list.
-
-            temp_node = leaves[0];
-
-            leaves.pop(0);
-            build_tree(temp_node.name,temp_node);
-
-
-            # print "leaf[" + str(leaf_element) + "] = " + str(leaves[leaf_element].name.id)        
-        
-        # after
-        print "The new list of leaves"
-        for leaf_element in range(0, len(leaves)) :
-            print "leaf[" + str(leaf_element) + "] = " + str(leaves[leaf_element].name.id)        
+        build_tree(root, root_node);
 
         dump_tree(root_node);
 
@@ -224,46 +161,6 @@ def main():
         file_dumper.dump(root_node, fl);
         fl.close();
 
-    else:
-        if options.hn_id != None:
-            # setup the root of the tree
-            root = id_node(); 
-            root.id = options.hn_id;
-            root.status = "new";
-
-            root_node = Node(root);
-            build_tree(root, root_node);
-
-            dump_tree(root_node);
-
-            fl = open(str(root.id) + ".leaves", "wb");
-            file_dumper.dump(leaves, fl);
-            fl.close();
-
-            fl = open(str(root.id) + ".tree", "wb");
-            file_dumper.dump(root_node, fl);
-            fl.close();
-        else :
-            show_help();
 
 if __name__ == "__main__":
-    new_main()
-
-    # setup the root of the tree
-    # root = id_node(); 
-    # root.id ="14116179"    
-    # root.status = "new";
-
-    # root_node = Node(root);
-
-    # fl = open(str(root.id) + ".tree", "rb");
-    # root_node = file_dumper.load(fl);
-    # fl.close();
-
-    # dump_tree(root_node);
-
-    # mark_all_node(root_node,"old_dog_new_tricks");
-
-    # dump_tree(root_node);
-    
-    
+    main()
