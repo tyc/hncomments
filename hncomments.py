@@ -67,6 +67,31 @@ def mark_all_node(root_node, status):
     pass
 
 
+def check_for_new_id(id, children):
+
+    result = False;
+
+    if len(children) > 0:
+        for x in range(0, len(children)):
+            if (id == children[x].name.id):
+                result = True;
+
+    return result;
+
+
+def get_children_index(id, children):
+
+    index = None;
+
+    if len(children) > 0:
+        for x in range(0, len(children)):
+            if (id == children[x].name.id):
+                index = x;
+
+    return index;
+
+
+
 # 1. get a list of branches.
 # 2. iterate each branch by calling itself recursively. Recursion stops when
 #    there are no more branches.
@@ -92,26 +117,36 @@ def build_tree(root, root_node) :
     # bug: if there are no new nodes at this check, subsequent new nodes at
     # lower level are ignored.
 
-    for root_leaf in range(0, len(root_node.children)):
-        result = root_node.children[root_leaf].name.id in branches; 
-        if result == True :
-            drop_index = branches.index(root_node.children[root_leaf].name.id);
+#    for root_leaf in range(0, len(root_node.children)):
+#        result = root_node.children[root_leaf].name.id in branches; 
+#        if result == True :
+#            drop_index = branches.index(root_node.children[root_leaf].name.id);
 #            print "old = " + str(root_node.children[root_leaf].name.id) + " " + str(result) + " " + str(drop_index);
-            branches.pop(drop_index);
+#            branches.pop(drop_index);
     
     if len(branches) != 0 :
         print "root = " + str(root.id);
 
         for x in range(0, len(branches)) :
-            branch = id_node();
-            branch.id = branches[x];
-            branch.status = "new";
-            branch_node = Node(branch, parent=root_node);
+            result = check_for_new_id(branches[x], root_node.children);
+
+            # only create a node if the node is new.
+            if result != True:
+                branch = id_node();
+                branch.id = branches[x];
+                branch.status = "new";
+                branch_node = Node(branch, parent=root_node);
+            else:
+                index = get_children_index(branches[x], root_node.children);
+                branch = root_node.children[index].name;
+                branch_node = root_node.children[index];
             
             print "branch[" + str(x) + "] = " + str(branch.id);
             build_tree(branch, branch_node);
     else:
-        leaves.append(root_node);    
+        if (root_node.name.status != "new"):
+            if (root_node.name.status != "old"):
+                leaves.append(root_node);    
 
     pass
 
