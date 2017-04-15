@@ -3,7 +3,7 @@ import urllib2
 import pickle as file_dumper
 import simplejson as json
 from optparse import OptionParser
-from anytree import Node, RenderTree, PreOrderIter
+from anytree import Node, RenderTree, PreOrderIter, AsciiStyle
 import subprocess
 
 # contains all the leaves in found.
@@ -50,7 +50,7 @@ def show_help():
 
 def dump_tree(root_node):
 
-    for pre, _, node in RenderTree(root_node):
+    for pre, _, node in RenderTree(root_node, style=AsciiStyle()):
         print ("%s%s" % (pre, (str(node.name.id) + "-" + str(node.name.status))))
 
     pass
@@ -73,24 +73,88 @@ def mark_all_node(root_node, status):
 # the root from the tree is passed in. it is assumed tha the root is already 
 # the datatype of Node.
 def build_tree(root, root_node) :
+
+
     branches = get_hn_IDs(root.id);
+
+    # branches is returned as a array of IDs from get_hn_IDs();
+    # root_node.children contains a list of nodes from the previous time.
+    # so we need to extract the list of IDs from a children and compare it
+    # the arrays of ID.
+    # 
+    # if the ID does matches, it is an old ID and can be dropped
+    # branches array.
+
+    # iterates over the list of old IDs. What is left in the branches array
+    # should be the new IDs.
+
+    if root_node.is_leaf == False :
+        for root_leaf in range(0, len(root_node.children)):
+            if root_node.children[root_leaf].name.id in branches == True :
+                drop_index = branches.index(root_node.children[root_leaf].name.id);
+                branches.pop(drop_index);
 
     if len(branches) != 0 :
         print "root = " + str(root.id);
-        root.status = "old";
 
         for x in range(0, len(branches)) :
             branch = id_node();
             branch.id = branches[x];
+            branch.status = "new";
             branch_node = Node(branch, parent=root_node);
             
             print "branch[" + str(x) + "] = " + str(branch.id);
             build_tree(branch, branch_node);
     else:
-        root.status = "new";
         leaves.append(root_node);    
 
     pass
+
+
+# Let's go
+def new_main():
+    global leaves;
+    
+    parser = OptionParser()
+    parser.add_option("-i", "--id", dest="hn_id", help="the id of the HN comment to track")
+    parser.add_option("-c", "--check", dest="check", action="store_false", help="check for new comments")
+
+    (options, args)=parser.parse_args()
+
+    # load in the save tree and mark all the nodes as old
+    if options.check != None:
+
+        # setup the root of the tree
+        root = id_node(); 
+        root.id = options.hn_id;
+        root.status = "new";
+
+        root_node = Node(root);
+
+        #read the data back in from disk.
+        fl = open(str(root.id) + ".leaves", "rb");
+        leaves = file_dumper.load(fl);
+        old_leaves = leaves;
+        fl.close();
+
+        fl = open(str(root.id) + ".tree", "rb");
+        root_node = file_dumper.load(fl);
+        fl.close();
+
+        # before
+        print "Previous list of leaves"
+        for leaf_element in range(0, len(leaves)) :
+            print "leaf[" + str(leaf_element) + "] = " + str(leaves[leaf_element].name.id)        
+
+        mark_all_node(root_node, "old");
+        dump_tree(root_node);
+
+    build_tree(root, root_node);
+
+    dump_tree(root_node);
+
+
+
 
 
 # Let's go
@@ -183,7 +247,7 @@ def main():
             show_help();
 
 if __name__ == "__main__":
-    main()
+    new_main()
 
     # setup the root of the tree
     # root = id_node(); 
@@ -201,6 +265,5 @@ if __name__ == "__main__":
     # mark_all_node(root_node,"old_dog_new_tricks");
 
     # dump_tree(root_node);
-    
     
     
