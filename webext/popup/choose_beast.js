@@ -13,6 +13,7 @@ function beastNameToURL(beastName) {
   }
 }
 
+
 /*
 Listen for clicks in the popup.
 
@@ -51,3 +52,10 @@ document.addEventListener("click", (e) => {
 
   console.log("hello, world!!");
 });
+
+document.addEventListener("submit", (e) => {
+    value = document.querySelector("#tyc").value;
+    console.log("got the submit data" + value);
+
+});  
+

@@ -1,9 +1,15 @@
 html, body {
-  width: 170px;
+  width: 200px;
   background-color: #ff6600;
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;  
 }
 
+
+.hn_id_input {
+    font-size: 1em;
+    text-align: right;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
 
 .footer {
   font-size: 0.75em;

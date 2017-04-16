@@ -13,7 +13,7 @@
   "permissions": [
     "activeTab"
   ],
-
+    
   "browser_action": {
     "default_icon": "icons/Snowflake.png",
     "default_title": "HNCommentsTracker",

@@ -6,15 +6,23 @@
     <link rel="stylesheet" href="choose_beast.css"/>
   </head>
 
+
+    
+    
   <body>
     <h1 class="heading">HN Comments</h1>
-    <div class="button beast">Show New Comments</div>
+    <div class="button beast">New Comments</div>
     <div class="button beast">Enter a New ID</div>
     <div class="button beast">About</div>
     <div class="button clear">Reset</div>
 
     <script src="choose_beast.js"></script>
-
+      
+    <form action="#" onsubmit="return validateFormOnSubmit(this);">
+        <input class="hn_id_input" type="text" id="tyc" name="hn_id" size="10" value="9999">
+        <input class="hn_id_input" type="submit" name="hn_id_submi" value="Add ID">
+    </form>
+      
     <h1 class="footer">v1.0 with love - Köln, DE</h1>  
   </body>
 </html>
