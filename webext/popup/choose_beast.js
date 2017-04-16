@@ -2,6 +2,7 @@
 Given the name of a beast, get the URL to the corresponding image.
 */
 function beastNameToURL(beastName) {
+
   switch (beastName) {
     case "Show New Comments":
       return browser.extension.getURL("beasts/frog.jpg");
@@ -28,28 +29,20 @@ If it's on a button which contains class "clear":
 
 document.addEventListener("click", (e) => {
 
-/*
-    var creating = browser.tabs.create({
-      url:"http://www.wikipedia.org"
-    });
-    
-   creating.then(onCreated, onError);
-
-    window.close();
-*/
-
   if (e.target.classList.contains("beast")) {
     var chosenBeast = e.target.textContent;
     var chosenBeastURL = beastNameToURL(chosenBeast);
 
-    browser.tabs.executeScript(null, { 
-      file: "/content_scripts/beastify.js" 
-    });
+      // this sets up the listener.
+      browser.tabs.executeScript(null, { 
+        file: "/content_scripts/beastify.js" 
+      });
 
-    var gettingActiveTab = browser.tabs.query({active: true, currentWindow: true});
-    gettingActiveTab.then((tabs) => {
-      browser.tabs.sendMessage(tabs[0].id, {beastURL: chosenBeastURL});
-    });
+      // this sends a message to bestify withe beastURL345
+      var gettingActiveTab = browser.tabs.query({active: true, currentWindow: true});
+      gettingActiveTab.then((tabs) => {
+        browser.tabs.sendMessage(tabs[0].id, {beastURL: chosenBeastURL});
+      });
   }
   else if (e.target.classList.contains("clear")) {
     browser.tabs.reload();

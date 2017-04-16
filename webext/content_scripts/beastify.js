@@ -25,12 +25,26 @@ that image, then insert the node into the document.
 */
 function insertBeast(beastURL) {
 
-  var beastImage = document.createElement("img");
+/*  var beastImage = document.createElement("img");
   beastImage.setAttribute("src", beastURL);
   beastImage.setAttribute("style", "width: 100vw");
   beastImage.setAttribute("style", "height: 100vh");
   document.body.appendChild(beastImage);
+*/
+  abc("HN Story 1", "https://news.ycombinator.com/item?id=14124328");
+  abc("HN Story 2", "https://news.ycombinator.com/item?id=14124298");
 }
+
+function abc(text, link) {
+  var para = document.createElement("p");
+  var textImage = document.createElement("a");
+  var createAText = document.createTextNode(text);
+  textImage.setAttribute("href", link);
+  textImage.appendChild(createAText);
+  para.appendChild(textImage);
+  document.body.appendChild(para);  
+}
+
 
 /*
 Assign beastify() as a listener for messages from the extension.
