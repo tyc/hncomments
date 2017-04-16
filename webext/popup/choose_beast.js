@@ -48,4 +48,6 @@ document.addEventListener("click", (e) => {
     browser.tabs.reload();
     window.close();
   }
+
+  console.log("hello, world!!");
 });

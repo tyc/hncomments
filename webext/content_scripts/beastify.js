@@ -31,11 +31,46 @@ function insertBeast(beastURL) {
   beastImage.setAttribute("style", "height: 100vh");
   document.body.appendChild(beastImage);
 */
-  abc("HN Story 1", "https://news.ycombinator.com/item?id=14124328");
-  abc("HN Story 2", "https://news.ycombinator.com/item?id=14124298");
+  // fetch("https://hacker-news.firebaseio.com/v0/item/)
+
+
+  // var JSON_text = getJSON("https://hacker-news.firebaseio.com/v0/item/1234.json");
+  // console.log(JSON_text);
+
+/*
+  getJSONP('https://hacker-news.firebaseio.com/v0/item/1234.json', function(data){
+    console.log(data);
+  });  
+*/
+
+  var request = new Request('https://hacker-news.firebaseio.com/v0/item/12411.json', {
+    method: 'GET', 
+    mode: 'cors', 
+    redirect: 'follow',
+    headers: new Headers({
+      'Content-Type': 'text/plain'
+    })
+  });
+
+// Now use it!
+fetch(request).then( x => { 
+    return x.text();
+}).then( y => {
+    console.log("here is the json data!")
+    console.log(y);
+});
+
+
+
+  push_HN_link("HN Story 1", "https://news.ycombinator.com/item?id=14124328");
+  push_HN_link("HN Story 2", "https://news.ycombinator.com/item?id=14124298");
+
+  console.log("hello from the content script");
 }
 
-function abc(text, link) {
+function push_HN_link(text, link) {
+
+  // for each link, it is abstracted into a paragraph.
   var para = document.createElement("p");
   var textImage = document.createElement("a");
   var createAText = document.createTextNode(text);
@@ -44,6 +79,32 @@ function abc(text, link) {
   para.appendChild(textImage);
   document.body.appendChild(para);  
 }
+
+function getJSON(yourUrl){
+    var Httpreq = new XMLHttpRequest(); // a new request
+    Httpreq.open("GET",yourUrl,false);
+    Httpreq.send(null);
+    return Httpreq.responseText;
+}
+
+function getJSONP(url, success) {
+
+    var ud = '_' + +new Date,
+        script = document.createElement('script'),
+        head = document.getElementsByTagName('head')[0] 
+               || document.documentElement;
+
+    window[ud] = function(data) {
+        head.removeChild(script);
+        success && success(data);
+    };
+
+    script.src = url.replace('callback=?', 'callback=' + ud);
+    head.appendChild(script);
+
+}
+
+
 
 
 /*
