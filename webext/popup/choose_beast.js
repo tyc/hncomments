@@ -3,11 +3,11 @@ Given the name of a beast, get the URL to the corresponding image.
 */
 function beastNameToURL(beastName) {
   switch (beastName) {
-    case "Frog":
+    case "Show New Comments":
       return browser.extension.getURL("beasts/frog.jpg");
-    case "Snake":
+    case "Enter a New ID":
       return browser.extension.getURL("beasts/snake.jpg");
-    case "Turtle":
+    case "About":
       return browser.extension.getURL("beasts/turtle.jpg");
   }
 }

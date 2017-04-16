@@ -1,5 +1,20 @@
 html, body {
-  width: 140px;
+  width: 170px;
+  background-color: #ff6600;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;  
+}
+
+
+.footer {
+  font-size: 0.75em;
+  text-align: center;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
+}
+
+.heading {
+  font-size: 1.3em;
+  text-align: center;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
 }
 
 .button {
@@ -7,6 +22,7 @@ html, body {
   padding: 4px;
   text-align: center;
   font-size: 1em;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
   cursor: pointer;
 }
 

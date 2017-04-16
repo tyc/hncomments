@@ -7,8 +7,6 @@ from optparse import OptionParser
 from anytree import Node, RenderTree, PreOrderIter, AsciiStyle
 import subprocess
 
-# contains all the leaves in found.
-leaves = [];
 comment_count = 0;
 
 class id_node :
@@ -130,7 +128,8 @@ def build_tree(root, root_node) :
         for x in range(0, len(branches)) :
             result = check_for_new_id(branches[x], root_node.children);
 
-            # only create a node if the node is new.
+            # only create a node if the node is new. Otherwise, just setup 
+            # parameters to pass into build_tree()
             if result != True:
                 branch = id_node();
                 branch.id = branches[x];
@@ -143,18 +142,13 @@ def build_tree(root, root_node) :
             
             print "branch[" + str(x) + "] = " + str(branch.id);
             build_tree(branch, branch_node);
-    else:
-        if (root_node.name.status != "new"):
-            if (root_node.name.status != "old"):
-                leaves.append(root_node);    
 
     pass
 
 
 # Let's go
 def main():
-    global leaves;
-    
+
     parser = OptionParser()
     parser.add_option("-i", "--id", dest="hn_id", help="the id of the HN comment to track")
 
@@ -169,13 +163,8 @@ def main():
 
         root_node = Node(root);
         # there is a save file already, use it.
-        if path.exists(str(root.id) + ".leaves") == True :
-            #read the data back in from disk.
-            fl = open(str(root.id) + ".leaves", "rb");
-            leaves = file_dumper.load(fl);
-            old_leaves = leaves;
-            fl.close();
-
+        if path.exists(str(root.id) + ".tree") == True :
+ 
             fl = open(str(root.id) + ".tree", "rb");
             root_node = file_dumper.load(fl);
             fl.close();
@@ -186,11 +175,6 @@ def main():
         build_tree(root, root_node);
 
         dump_tree(root_node);
-
-        # saves the data away for next time.
-        fl = open(str(root.id) + ".leaves", "wb");
-        file_dumper.dump(leaves, fl);
-        fl.close();
 
         fl = open(str(root.id) + ".tree", "wb");
         file_dumper.dump(root_node, fl);
