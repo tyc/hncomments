@@ -1,7 +1,7 @@
 # HN Comments
 
 
-#17April2017
+# 17April2017
 The code under the webext folder is an firefox web extension javascript that tries to do the same as what the python code is doing. The python code can workout the new comments from the last interrogation. The javascript code cannot. 
 
 For this verison there is a hack to get around the cross domiain request problem. It is a security restriction that stops the javascript from requesting data while its active tab is in a different url domain. So requesting it the JSON data from "www.google.com" is not going to work here. The work around is to open a window and point it to "https://hacker-news.firebaseio.com/v0/item/1.json" and then on the next click, populate it with the comments.
