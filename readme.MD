@@ -1,5 +1,10 @@
 # HN Comments
 
+# 17April2017 21:08
+
+The storage of the IDs and the getting it get the JSON data and display it as hyperlink is working. The IDs are added into via the input box of the popup. The next step would be to right click on the message from the Hacker News website and save that ID away. 
+
+The formatting of the information shown is also not so good. It is just a big list of data that is not sorted. The order which the data is display seems to be random.
 
 # 17April2017
 The code under the webext folder is an firefox web extension javascript that tries to do the same as what the python code is doing. The python code can workout the new comments from the last interrogation. The javascript code cannot. 
