@@ -6,7 +6,8 @@ beastify():
 */
 function beastify(request, sender, sendResponse) {
   removeEverything();
-  insertBeast(request.beastURL);
+  // insertBeast(request.beastURL);
+  get_storage_id();
   browser.runtime.onMessage.removeListener(beastify);
 }
 
@@ -17,6 +18,23 @@ function removeEverything() {
   while (document.body.firstChild) {
     document.body.firstChild.remove();
   }
+}
+
+/* generic error handler */
+function onError(error) {
+  console.log(error);
+}
+
+function get_storage_id() {
+  var gettingAllStoredHNIds = browser.storage.local.get(null);
+  gettingAllStoredHNIds.then((results) => {
+    var HNIds = Object.keys(results);
+    for(HNId of HNIds) {
+      var curValue = results[HNId];
+      console.log(HNId + " " + curValue);
+      push_HN_link(HNId,curValue);
+    }
+  }, onError);
 }
 
 /*

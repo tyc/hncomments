@@ -46,6 +46,7 @@ document.addEventListener("click", (e) => {
       });
   }
   else if (e.target.classList.contains("clear")) {
+    browser.storage.local.clear();
     browser.tabs.reload();
     window.close();
   }
@@ -57,8 +58,7 @@ document.addEventListener("click", (e) => {
 });
 
 document.addEventListener("submit", (e) => {
-    value = document.querySelector("#tyc").value;
+    var value = document.querySelector("#hn_id").value;
+    var storingHNId = browser.storage.local.set({[value]:"HN_ID"});
     console.log("got the submit data" + value);
-
 });  
-
