@@ -18,7 +18,7 @@ html, body {
 }
 
 .heading {
-  font-size: 1.3em;
+  font-size: 1em;
   text-align: center;
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
 }
@@ -32,11 +32,11 @@ html, body {
   cursor: pointer;
 }
 
-.beast:hover {
+.ShowComments:hover {
   background-color: #DFF2F2;
 }
 
-.beast {
+.ShowComments {
  background-color: #B5F2F2;
 }
 
@@ -46,4 +46,12 @@ html, body {
 
 .clear:hover {
  background-color: #EAEAC9;
+}
+
+.GotoSite:hover {
+  background-color: #DFF2F2;
+}
+
+.GotoSite {
+ background-color: #B5F2F2;
 }

@@ -30,7 +30,7 @@ If it's on a button which contains class "clear":
 
 document.addEventListener("click", (e) => {
 
-  if (e.target.classList.contains("beast")) {
+  if (e.target.classList.contains("ShowComments")) {
     var chosenBeast = e.target.textContent;
     var chosenBeastURL = beastNameToURL(chosenBeast);
 
@@ -48,6 +48,9 @@ document.addEventListener("click", (e) => {
   else if (e.target.classList.contains("clear")) {
     browser.tabs.reload();
     window.close();
+  }
+  else if (e.target.classList.contains("GotoSite")) {
+    window.open("https://hacker-news.firebaseio.com/v0/item/1.json");
   }
 
   console.log("hello, world!!");
