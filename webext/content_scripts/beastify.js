@@ -47,19 +47,23 @@ function get_storage_id() {
   gettingAllStoredHNIds.then((results) => {
     var HNIds = Object.keys(results);
 
+    var rank = 0;
+
     // for each ID, we sent a link to it.
     for(HNId of HNIds) {
       var curValue = results[HNId];
       console.log(HNId + " " + curValue);
 
-      getJSONData(HNId);
+      rank = rank + 1;
+      
+      getJSONData(rank, HNId);
 
       // push_HN_link("HN ID = " + HNId, "https://news.ycombinator.com/item?id="+HNId);
     }
   }, onError);
 }
 
-function getJSONData(HNId) {
+function getJSONData(rank, HNId) {
 
   var url_request = 'https://hacker-news.firebaseio.com/v0/item/' + HNId + '.json';
 
@@ -83,10 +87,10 @@ function getJSONData(HNId) {
 
       if (JSON_data.title != null) {
         console.log("JSON title data " + JSON_data.title);
-        push_HN_link("1.", JSON_data.title, "https://news.ycombinator.com/item?id="+HNId);
+        push_HN_link(rank+"--", JSON_data.title, "https://news.ycombinator.com/item?id="+HNId);
       } else if (JSON_data.text != null) {
         console.log("JSON text data " + JSON_data.text);
-        push_HN_link("1.", JSON_data.text, "https://news.ycombinator.com/item?id="+HNId);
+        push_HN_link(rank+"--", JSON_data.text, "https://news.ycombinator.com/item?id="+HNId);
       }
   });
 }
@@ -134,24 +138,26 @@ function truncate(string,length){
 function push_HN_link(number, text, link) {
 
   // for each link, it is abstracted into a paragraph.
-  var para = document.createElement("p");
+  var row = document.createElement("tr");
   
-  var indexImage = document.createElement("h4");
+  var col1 = document.createElement("td");
   var indexText = document.createTextNode(number);
-  indexImage.style.fontFamily="Verdana, Geneva, sans-serif";
-  indexImage.style.fontSize="10pt";
-  indexImage.appendChild(indexText);
+  col1.style.fontFamily="Verdana, Geneva, sans-serif";
+  col1.style.fontSize="10pt";
+  col1.appendChild(indexText);
 
+  var col2 = document.createElement("td")
   var textImage = document.createElement("a");
   var createAText = document.createTextNode(truncate(text,45));
   textImage.setAttribute("href", link);
   textImage.style.fontFamily="Verdana, Geneva, sans-serif";
   textImage.style.fontSize="10pt";
   textImage.appendChild(createAText);
+  col2.appendChild(textImage);
 
-  para.appendChild(indexImage);
-  para.appendChild(textImage);
-  document.body.appendChild(para);  
+  row.appendChild(col1);
+  row.appendChild(col2);
+  document.body.appendChild(row);  
 }
 
 
