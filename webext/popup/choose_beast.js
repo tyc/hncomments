@@ -52,6 +52,7 @@ document.addEventListener("click", (e) => {
   }
   else if (e.target.classList.contains("GotoSite")) {
     window.open("https://hacker-news.firebaseio.com/v0/item/1.json");
+
   }
 
   console.log("hello, world!!");
