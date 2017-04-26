@@ -8,19 +8,6 @@ function beastify(request, sender, sendResponse) {
   removeEverything();
   // insertBeast(request.beastURL);
   get_storage_id();
-  // getJSONData('12323');
-  // getJSONData('1411223');
-  // getJSONData('14133037');
-
-  // push_HN_link("abc HN Story 1", "https://news.ycombinator.com/item?id=14124328");
-  // push_HN_link("abc HN Story 2", "https://news.ycombinator.com/item?id=14124298");
-  // push_HN_link("abc HN Story 1", "https://news.ycombinator.com/item?id=14124328");
-  // push_HN_link("abc HN Story 2", "https://news.ycombinator.com/item?id=14124298");
-  // push_HN_link("abc HN Story 1", "https://news.ycombinator.com/item?id=14124328");
-  // push_HN_link("abc HN Story 2", "https://news.ycombinator.com/item?id=14124298");
-
-
-
   browser.runtime.onMessage.removeListener(beastify);
 }
 
@@ -32,6 +19,13 @@ function removeEverything() {
     document.body.firstChild.remove();
   }
 }
+
+/*
+ * for each HN IDs, I need the drill down tree structure. If it is
+ * the first, it will need to traverse all the three it as a
+ * reference.
+ * 
+function 
 
 /* generic error handler */
 function onError(error) {
@@ -126,7 +120,63 @@ fetch(request).then( x => {
   console.log("hello from the content script");
 }
 
+
+function unicodeToChar(text) {
+   return text.replace(/\\x[\dA-F]{4}/gi, 
+          function (match) {
+               return String.fromCharCode(parseInt(match.replace(/\\x/g, ''), 16));
+          });
+}
+
+
+/*
+ * convertion routine from a hexadecimal value to a character
+ * borrowed it from http://www.rishida.net/tools/conversion/conversionfunctions.js
+ */
+function hex2char ( hex ) {
+	// converts a single hex number to a character
+	// note that no checking is performed to ensure that this is just a hex number, eg. no spaces etc
+	// hex: string, the hex codepoint to be converted
+	var result = '';
+	var n = parseInt(hex, 16);
+    if (n <= 0xFFFF) { result += String.fromCharCode(n); } 
+	else if (n <= 0x10FFFF) {
+		n -= 0x10000
+		result += String.fromCharCode(0xD800 | (n >> 10)) + String.fromCharCode(0xDC00 | (n & 0x3FF));
+    	} 
+	else { result += 'hex2Char error: Code point out of range: '+dec2hex(n); }
+	return result;
+	}
+
+/*
+ * borrowed from http://www.rishida.net/tools/conversion/conversionfunctions.js
+ */
+function convertHexNCR2Char ( str ) { 
+	// converts a string containing &#x...; escapes to a string of characters
+	// str: string, the input
+	
+	// convert up to 6 digit escapes to characters
+	str = str.replace(/&#x([A-Fa-f0-9]{1,6});/g, 
+					function(matchstr, parens) {
+            var ch = hex2char(parens);
+            return ch;
+						}
+						); 
+	return str;
+	}
+
 function truncate(string,length){
+
+    // string = unicodeToChar(string);
+    // string = string.replace(/&#x27;/g, '\'');
+    // string = decodeURIComponent(JSON.parse(string));
+    string = convertHexNCR2Char(string);
+    string = string.replace(/&gt;/g, '>');
+    string = string.replace(/&lt;/g, '<');
+    string = string.replace(/&quot;/g, '"');
+    string = string.replace(/&apos;/g, "'");
+    string = string.replace(/&amp;/g, '&');
+
    if (string.length > length)
       return string.substring(0,length)+'...';
    else
@@ -148,7 +198,7 @@ function push_HN_link(number, text, link) {
 
   var col2 = document.createElement("td")
   var textImage = document.createElement("a");
-  var createAText = document.createTextNode(truncate(text,45));
+  var createAText = document.createTextNode(truncate(text,75));
   textImage.setAttribute("href", link);
   textImage.style.fontFamily="Verdana, Geneva, sans-serif";
   textImage.style.fontSize="10pt";

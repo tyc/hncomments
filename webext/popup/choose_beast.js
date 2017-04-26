@@ -45,17 +45,17 @@ document.addEventListener("click", (e) => {
         browser.tabs.sendMessage(tabs[0].id, {beastURL: chosenBeastURL});
       });
   }
+  // clear everything, including the list of HN IDs
+  //
   else if (e.target.classList.contains("clear")) {
     browser.storage.local.clear();
     browser.tabs.reload();
     window.close();
   }
   else if (e.target.classList.contains("GotoSite")) {
-    window.open("https://hacker-news.firebaseio.com/v0/item/1.json");
+    window.open("https://hacker-news.firebaseio.com/v0/item/1.json",'_blank');
 
   }
-
-  console.log("hello, world!!");
 });
 
 document.addEventListener("submit", (e) => {
